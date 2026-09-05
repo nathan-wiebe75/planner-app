@@ -9,6 +9,7 @@ import SwiftUI
 
 
 struct Assignment: View{
+    let id: Int
     let name: String
     let course: String
     let isComplete: Bool = false
@@ -18,11 +19,16 @@ struct Assignment: View{
             Image(systemName: "folder.circle")
                 .font(.largeTitle)
                 .frame(width: 50)
-            VStack{
+            VStack(alignment: .leading, spacing: 2) {
                 Text("\(name)")
-                    .font(.title)
+                    //.font(.title)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
                 Text("\(course)")
+                    .lineLimit(1)
+                    .truncationMode(.tail)
             }
+            .layoutPriority(1)
             Spacer()
             Image(systemName: isComplete ? "checkmark.circle.fill" : "checkmark.circle")
                 .font(.largeTitle)
@@ -41,5 +47,6 @@ struct Assignment: View{
     }
 }
 #Preview {
-    Assignment(name: "Assignment 1", course: "Computer Architecture")
+    Assignment(id: 1, name: "Artificial Intelligence", course: "Social Implications of Computers")
 }
+
