@@ -17,6 +17,22 @@
   }
 }
 
+.top-nav {
+  display: flex;
+  align-items: center;
+  min-height: 64px;
+  padding: 0 32px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+}
+
+.top-nav__title {
+  margin: 0;
+  color: var(--text-h);
+  font-size: 20px;
+  font-weight: 600;
+}
+
 .hero {
   position: relative;
 
@@ -180,5 +196,203 @@
   &::after {
     right: 0;
     border-right-color: var(--border);
+  }
+}
+
+.view-switcher {
+  display: flex;
+  gap: 8px;
+  margin: 24px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.view-switcher button {
+  border: 0;
+  border-bottom: 2px solid transparent;
+  padding: 10px 14px;
+  color: var(--text);
+  background: transparent;
+  cursor: pointer;
+}
+
+.view-switcher button:hover,
+.view-switcher button.active {
+  color: var(--text-h);
+  border-bottom-color: var(--accent);
+}
+
+.assignment-list,
+.course-list {
+  display: grid;
+  gap: 12px;
+}
+
+.create-form {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) auto auto;
+  gap: 14px;
+  align-items: end;
+  margin-bottom: 24px;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--social-bg);
+  text-align: left;
+}
+
+.create-form label {
+  display: grid;
+  gap: 6px;
+  color: var(--text-h);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.create-form input,
+.create-form select {
+  width: 100%;
+  height: 40px;
+  box-sizing: border-box;
+  padding: 9px 10px;
+  color: var(--text-h);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font: inherit;
+}
+
+.create-form input:focus,
+.create-form select:focus {
+  outline: 2px solid var(--accent-border);
+  outline-offset: 1px;
+}
+
+.create-form button {
+  min-height: 40px;
+  padding: 9px 14px;
+  color: var(--text-h);
+  background: var(--accent-bg);
+  border: 1px solid var(--accent-border);
+  border-radius: 4px;
+  cursor: pointer;
+  font: inherit;
+  white-space: nowrap;
+}
+
+.create-form button:hover {
+  background: var(--accent-border);
+}
+
+.create-form button[type='button'] {
+  background: transparent;
+  border-color: var(--border);
+}
+
+@media (max-width: 720px) {
+  .create-form {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .create-form label:first-child {
+    grid-column: 1 / -1;
+  }
+}
+
+.course-card {
+  display: grid;
+  grid-template-columns: minmax(220px, 2fr) repeat(2, minmax(140px, 1fr)) auto;
+  gap: 20px;
+  align-items: center;
+  padding: 16px 20px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  text-align: left;
+}
+
+.course-card__name {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.course-card h2 {
+  margin: 0;
+}
+
+.course-card__swatch {
+  width: 12px;
+  height: 12px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+}
+
+.course-card__label {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--text);
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.assignment-card {
+  display: grid;
+  grid-template-columns: minmax(220px, 2fr) repeat(3, minmax(110px, 1fr)) auto auto;
+  gap: 20px;
+  align-items: center;
+  padding: 16px 20px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  text-align: left;
+}
+
+.assignment-card h2 {
+  margin: 0;
+}
+
+.assignment-card__name {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.assignment-card__swatch {
+  width: 12px;
+  height: 12px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+}
+
+.assignment-card__label {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--text);
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.assignment-card button {
+  padding: 8px 12px;
+  color: var(--text-h);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.assignment-card button:hover {
+  border-color: var(--accent);
+}
+
+@media (max-width: 720px) {
+  .assignment-card,
+  .course-card {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .assignment-card__name,
+  .assignment-card button,
+  .course-card__name {
+    grid-column: 1 / -1;
   }
 }

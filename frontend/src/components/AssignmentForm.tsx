@@ -1,18 +1,31 @@
 import { type FormEvent, useState } from 'react'
 import type Assignment from '../types/Assignment'
+import type Course from '../types/Course'
 
-type AssignmentFormData = Omit<Assignment, 'id' | 'isComplete' | 'dueDate'> & {
+export type AssignmentFormData = Omit<Assignment, 'id' | 'isComplete' | 'dueDate'> & {
 	dueDate: string
 }
 
 type AssignmentFormProps = {
+	courses?: Course[]
+	initialAssignment?: Assignment
+	submitLabel?: string
+	onCancel?: () => void
 	onSubmit?: (assignment: AssignmentFormData) => void
 }
 
-function AssignmentForm({ onSubmit }: AssignmentFormProps) {
-	const [name, setName] = useState('')
-	const [course, setCourse] = useState('')
-	const [dueDate, setDueDate] = useState('')
+function AssignmentForm({
+	courses = [],
+	initialAssignment,
+	submitLabel = 'Add assignment',
+	onCancel,
+	onSubmit,
+}: AssignmentFormProps) {
+	const [name, setName] = useState(initialAssignment?.name ?? '')
+	const [course, setCourse] = useState(initialAssignment?.course ?? '')
+	const [dueDate, setDueDate] = useState(
+		initialAssignment?.dueDate.toISOString().slice(0, 10) ?? '',
+	)
 
 	function handleSubmit(event: FormEvent<HTMLFormElement>) {
 		event.preventDefault()
@@ -20,7 +33,7 @@ function AssignmentForm({ onSubmit }: AssignmentFormProps) {
 	}
 
 	return (
-		<form onSubmit={handleSubmit}>
+		<form className="create-form" onSubmit={handleSubmit}>
 			<label>
 				Assignment name
 				<input
@@ -31,11 +44,18 @@ function AssignmentForm({ onSubmit }: AssignmentFormProps) {
 			</label>
 			<label>
 				Course
-				<input
+				<select
 					value={course}
 					onChange={(event) => setCourse(event.target.value)}
 					required
-				/>
+				>
+					<option value="">Select a course</option>
+					{courses.map((availableCourse) => (
+						<option key={availableCourse.id} value={availableCourse.name}>
+							{availableCourse.name}
+						</option>
+					))}
+				</select>
 			</label>
 			<label>
 				Due date
@@ -45,7 +65,12 @@ function AssignmentForm({ onSubmit }: AssignmentFormProps) {
 					onChange={(event) => setDueDate(event.target.value)}
 				/>
 			</label>
-			<button type="submit">Add assignment</button>
+			<button type="submit">{submitLabel}</button>
+			{onCancel && (
+				<button type="button" onClick={onCancel}>
+					Cancel
+				</button>
+			)}
 		</form>
 	)
 }
