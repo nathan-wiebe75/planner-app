@@ -13,6 +13,25 @@ with engine.begin() as connection:
             text("ALTER TABLE courses ADD COLUMN color VARCHAR(20) NOT NULL DEFAULT '#7c3aed'")
         )
 
+    assignment_columns = connection.execute(text("PRAGMA table_info(assignments)")).all()
+    if not any(column[1] == "course" for column in assignment_columns):
+        connection.execute(
+            text("ALTER TABLE assignments ADD COLUMN course VARCHAR(100) NOT NULL DEFAULT ''")
+        )
+        connection.execute(
+            text(
+                """
+                UPDATE assignments
+                SET course = (
+                    SELECT courses.name
+                    FROM courses
+                    WHERE courses.id = assignments.course_id
+                )
+                WHERE course = ''
+                """
+            )
+        )
+
 app = FastAPI(
     title="Assignment Tracker API"
 )
