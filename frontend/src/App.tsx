@@ -7,7 +7,6 @@ import AssignmentForm, {
 import ClassCard from './components/ClassCard'
 import CourseForm, { type CourseFormData } from './components/CourseForm'
 import Navbar from './components/Navbar'
-import Sidebar from './components/Sidebar'
 import type Assignment from './types/Assignment'
 import type Course from './types/Course'
 import {
@@ -18,6 +17,7 @@ import {
 } from './services/assignmentService'
 import {
   createCourse,
+  deleteCourse as deleteCourseFromApi,
   getCourses,
   updateCourse as updateCourseInApi,
 } from './services/classService'
@@ -98,6 +98,18 @@ function App() {
     setEditingCourseId(null)
   }
 
+  async function deleteCourse(id: number) {
+    await deleteCourseFromApi(id)
+    setCourses((currentCourses) =>
+      currentCourses.filter((course) => course.id !== id),
+    )
+    setAssignments((currentAssignments) =>
+      currentAssignments.filter((assignment) =>
+        courses.find((course) => course.id === id)?.name !== assignment.course,
+      ),
+    )
+  }
+
   const sortedAssignments = [...assignments].sort(
     (firstAssignment, secondAssignment) =>
       firstAssignment.dueDate.getTime() - secondAssignment.dueDate.getTime(),
@@ -107,7 +119,6 @@ function App() {
     <>
       <Navbar title="Student Planner" />
       <div className="app-layout">
-        <Sidebar />
         <main>
           <header>
             <p>Overview</p>
@@ -204,6 +215,7 @@ function App() {
                     key={course.id}
                     {...course}
                     onEdit={() => setEditingCourseId(course.id)}
+                    onDelete={() => deleteCourse(course.id)}
                     assignmentCount={assignments.filter(
                       (assignment) => assignment.course === course.name,
                     ).length}

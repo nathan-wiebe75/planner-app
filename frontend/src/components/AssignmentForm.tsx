@@ -39,7 +39,7 @@ function AssignmentForm({
 	return (
 		<form className="create-form" onSubmit={handleSubmit}>
 			<label>
-				Assignment name
+				Assignment Name
 				<input
 					value={name}
 					onChange={(event) => setName(event.target.value)}

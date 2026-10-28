@@ -2,6 +2,7 @@ import type Course from '../types/Course'
 
 type ClassCardProps = Partial<Course> & {
 	onEdit?: () => void
+	onDelete?: () => void
 	assignmentCount?: number
 }
 
@@ -10,6 +11,7 @@ function ClassCard({
 	courseNumber = 'No course number',
 	color = '#9ca3af',
 	onEdit,
+	onDelete,
 	assignmentCount = 0,
 }: ClassCardProps) {
 	return (
@@ -33,6 +35,11 @@ function ClassCard({
 			{onEdit && (
 				<button type="button" onClick={onEdit}>
 					Edit
+				</button>
+			)}
+			{onDelete && (
+				<button type="button" onClick={onDelete}>
+					Delete
 				</button>
 			)}
 		</article>

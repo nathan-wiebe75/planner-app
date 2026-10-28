@@ -39,7 +39,7 @@ function CourseForm({
 	return (
 		<form className="create-form" onSubmit={handleSubmit}>
 			<label>
-				Course name
+				Course Name
 				<input
 					value={name}
 					onChange={(event) => setName(event.target.value)}
@@ -47,7 +47,7 @@ function CourseForm({
 				/>
 			</label>
 			<label>
-				Course number
+				Course Number
 				<input
 					value={courseNumber}
 					onChange={(event) => setCourseNumber(event.target.value)}

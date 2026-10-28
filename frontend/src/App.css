@@ -201,24 +201,33 @@
 
 .view-switcher {
   display: flex;
-  gap: 8px;
+  justify-content: flex-start;
+  gap: 4px;
   margin: 24px 0;
-  border-bottom: 1px solid var(--border);
+  padding: 4px;
+  width: max-content;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--social-bg);
 }
 
 .view-switcher button {
   border: 0;
-  border-bottom: 2px solid transparent;
-  padding: 10px 14px;
+  border-radius: 4px;
+  padding: 8px 14px;
   color: var(--text);
   background: transparent;
   cursor: pointer;
 }
 
-.view-switcher button:hover,
 .view-switcher button.active {
   color: var(--text-h);
-  border-bottom-color: var(--accent);
+  background: var(--bg);
+  box-shadow: var(--shadow);
+}
+
+.view-switcher button:hover {
+  color: var(--text-h);
 }
 
 .assignment-list,
@@ -300,13 +309,26 @@
 
 .course-card {
   display: grid;
-  grid-template-columns: minmax(220px, 2fr) repeat(2, minmax(140px, 1fr)) auto;
+  grid-template-columns: minmax(220px, 2fr) repeat(2, minmax(140px, 1fr)) auto auto;
   gap: 20px;
   align-items: center;
   padding: 16px 20px;
   border: 1px solid var(--border);
   border-radius: 8px;
   text-align: left;
+}
+
+.course-card button {
+  padding: 8px 12px;
+  color: var(--text-h);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.course-card button:hover {
+  border-color: var(--accent);
 }
 
 .course-card__name {
