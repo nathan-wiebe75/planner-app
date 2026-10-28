@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 import AssignmentCard from './components/AssignmentCard'
 import AssignmentForm, {
@@ -10,109 +10,90 @@ import Navbar from './components/Navbar'
 import Sidebar from './components/Sidebar'
 import type Assignment from './types/Assignment'
 import type Course from './types/Course'
-
-const startingCourses: Course[] = [
-  {
-    id: 1,
-    name: 'Web Development',
-    courseNumber: 'CS 201',
-    color: '#7c3aed',
-  },
-  {
-    id: 2,
-    name: 'Database Systems',
-    courseNumber: 'CS 220',
-    color: '#0891b2',
-  },
-]
-
-const startingAssignments: Assignment[] = [
-  {
-    id: 1,
-    name: 'Build a React component',
-    course: 'Web Development',
-    dueDate: new Date('2026-09-15'),
-    isComplete: false,
-  },
-  {
-    id: 2,
-    name: 'Design a database schema',
-    course: 'Database Systems',
-    dueDate: new Date('2026-09-18'),
-    isComplete: true,
-  },
-]
+import {
+  createAssignment,
+  deleteAssignment as deleteAssignmentFromApi,
+  getAssignments,
+  updateAssignment as updateAssignmentInApi,
+} from './services/assignmentService'
+import {
+  createCourse,
+  getCourses,
+  updateCourse as updateCourseInApi,
+} from './services/classService'
 
 function App() {
-  const [courses, setCourses] = useState(startingCourses)
-  const [assignments, setAssignments] = useState(startingAssignments)
+  const [courses, setCourses] = useState<Course[]>([])
+  const [assignments, setAssignments] = useState<Assignment[]>([])
   const [activeView, setActiveView] = useState<'assignments' | 'courses'>('assignments')
   const [editingAssignmentId, setEditingAssignmentId] = useState<number | null>(null)
   const [editingCourseId, setEditingCourseId] = useState<number | null>(null)
 
-  function addAssignment(assignment: AssignmentFormData) {
-    setAssignments((currentAssignments) => [
-      ...currentAssignments,
-      {
-        id: Date.now(),
-        name: assignment.name,
-        course: assignment.course,
-        dueDate: assignment.dueDate
-          ? new Date(`${assignment.dueDate}T00:00:00`)
-          : new Date(),
-        isComplete: false,
-      },
-    ])
+  useEffect(() => {
+    async function loadPlannerData() {
+      const [loadedCourses, loadedAssignments] = await Promise.all([
+        getCourses(),
+        getAssignments(),
+      ])
+      setCourses(loadedCourses)
+      setAssignments(loadedAssignments)
+    }
+
+    void loadPlannerData()
+  }, [])
+
+  async function addAssignment(assignment: AssignmentFormData) {
+    const savedAssignment = await createAssignment({
+      ...assignment,
+      dueDate: new Date(`${assignment.dueDate}T00:00:00`),
+      isComplete: false,
+    })
+    setAssignments((currentAssignments) => [...currentAssignments, savedAssignment])
   }
 
-  function deleteAssignment(id: number) {
+  async function deleteAssignment(id: number) {
+    await deleteAssignmentFromApi(id)
     setAssignments((currentAssignments) =>
       currentAssignments.filter((assignment) => assignment.id !== id),
     )
   }
 
-  function updateAssignment(id: number, updatedAssignment: AssignmentFormData) {
+  async function toggleAssignmentCompletion(id: number) {
+    const assignment = assignments.find((item) => item.id === id)
+    if (!assignment) return
+
+    const updatedAssignment = await updateAssignmentInApi(id, {
+      isComplete: !assignment.isComplete,
+    })
     setAssignments((currentAssignments) =>
-      currentAssignments.map((assignment) =>
-        assignment.id === id
-          ? {
-              ...assignment,
-              ...updatedAssignment,
-              dueDate: updatedAssignment.dueDate
-                ? new Date(`${updatedAssignment.dueDate}T00:00:00`)
-                : new Date(),
-            }
-          : assignment,
-      ),
+      currentAssignments.map((item) => item.id === id ? updatedAssignment : item),
+    )
+  }
+
+  async function updateAssignment(id: number, updatedAssignment: AssignmentFormData) {
+    const savedAssignment = await updateAssignmentInApi(id, {
+      ...updatedAssignment,
+      dueDate: new Date(`${updatedAssignment.dueDate}T00:00:00`),
+    })
+    setAssignments((currentAssignments) =>
+      currentAssignments.map((assignment) => assignment.id === id ? savedAssignment : assignment),
     )
     setEditingAssignmentId(null)
   }
 
-  function addCourse(course: CourseFormData) {
-    setCourses((currentCourses) => [
-      ...currentCourses,
-      { id: Date.now(), ...course },
-    ])
+  async function addCourse(course: CourseFormData) {
+    const savedCourse = await createCourse(course)
+    setCourses((currentCourses) => [...currentCourses, savedCourse])
   }
 
-  function updateCourse(id: number, updatedCourse: CourseFormData) {
-    const previousCourse = courses.find((course) => course.id === id)
-
+  async function updateCourse(id: number, updatedCourse: CourseFormData) {
+    const savedCourse = await updateCourseInApi(id, updatedCourse)
     setCourses((currentCourses) =>
-      currentCourses.map((course) =>
-        course.id === id ? { id, ...updatedCourse } : course,
-      ),
+      currentCourses.map((course) => course.id === id ? savedCourse : course),
     )
 
-    if (previousCourse && previousCourse.name !== updatedCourse.name) {
-      setAssignments((currentAssignments) =>
-        currentAssignments.map((assignment) =>
-          assignment.course === previousCourse.name
-            ? { ...assignment, course: updatedCourse.name }
-            : assignment,
-        ),
-      )
-    }
+    const loadedAssignments = await getAssignments()
+    setAssignments(loadedAssignments)
 
     setEditingCourseId(null)
   }
@@ -191,6 +172,7 @@ function App() {
                       courseColor={courses.find(
                         (course) => course.name === assignment.course,
                       )?.color}
+                      onToggleComplete={() => toggleAssignmentCompletion(assignment.id)}
                       onEdit={() => setEditingAssignmentId(assignment.id)}
                       onDelete={() => deleteAssignment(assignment.id)}
                     />

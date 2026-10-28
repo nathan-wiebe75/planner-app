@@ -6,6 +6,10 @@ export type AssignmentFormData = Omit<Assignment, 'id' | 'isComplete' | 'dueDate
 	dueDate: string
 }
 
+function getDefaultDueDate() {
+	return new Date().toISOString().slice(0, 10)
+}
+
 type AssignmentFormProps = {
 	courses?: Course[]
 	initialAssignment?: Assignment
@@ -24,7 +28,7 @@ function AssignmentForm({
 	const [name, setName] = useState(initialAssignment?.name ?? '')
 	const [course, setCourse] = useState(initialAssignment?.course ?? '')
 	const [dueDate, setDueDate] = useState(
-		initialAssignment?.dueDate.toISOString().slice(0, 10) ?? '',
+		initialAssignment?.dueDate.toISOString().slice(0, 10) ?? getDefaultDueDate(),
 	)
 
 	function handleSubmit(event: FormEvent<HTMLFormElement>) {

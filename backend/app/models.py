@@ -9,9 +9,10 @@ class Course(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(200))
     code: Mapped[str] = mapped_column(String(50))
+    color: Mapped[str] = mapped_column(String(20), default="#7c3aed")
 
     assignments: Mapped[list["Assignment"]] = relationship(
-        back_populates="course"
+        back_populates="course_obj"
     )
 
 
@@ -28,6 +29,6 @@ class Assignment(Base):
         ForeignKey("courses.id")
     )
 
-    course: Mapped["Course"] = relationship(
+    course_obj: Mapped["Course"] = relationship(
         back_populates="assignments"
     )

@@ -4,6 +4,7 @@ type AssignmentCardProps = Partial<Assignment> & {
 	courseColor?: string
 	onEdit?: () => void
 	onDelete?: () => void
+	onToggleComplete?: () => void
 }
 
 function AssignmentCard({
@@ -14,6 +15,7 @@ function AssignmentCard({
 	isComplete = false,
 	onEdit,
 	onDelete,
+	onToggleComplete,
 }: AssignmentCardProps) {
 	return (
 		<article className="assignment-card">
@@ -37,6 +39,11 @@ function AssignmentCard({
 				<span className="assignment-card__label">Status</span>
 				<p>{isComplete ? 'Complete' : 'Incomplete'}</p>
 			</div>
+			{onToggleComplete && (
+				<button type="button" onClick={onToggleComplete}>
+					{isComplete ? 'Mark Incomplete' : 'Mark Complete'}
+				</button>
+			)}
 			{onEdit && (
 				<button type="button" onClick={onEdit}>
 					Edit
