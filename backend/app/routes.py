@@ -70,6 +70,19 @@ def update_course(
     return course
 
 
+@course_router.delete("/{course_id}", status_code=204)
+def delete_course(course_id: int, db: Session = Depends(get_db)):
+    course = db.get(Course, course_id)
+    if course is None:
+        raise HTTPException(status_code=404, detail="Course not found")
+
+    for assignment in course.assignments:
+        db.delete(assignment)
+    db.delete(course)
+    db.commit()
+    return None
+
+
 @router.get("/", response_model=list[AssignmentResponse])
 def get_assignments(db: Session = Depends(get_db)):
     statement = select(Assignment)
