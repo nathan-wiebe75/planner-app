@@ -1,5 +1,8 @@
+from pathlib import Path
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy import text
 from app.database import Base, engine
 from app.routes import course_router, router
@@ -38,7 +41,11 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "http://sparrow1.local:5173",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -47,8 +54,12 @@ app.add_middleware(
 app.include_router(router)
 app.include_router(course_router)
 
-@app.get("/")
-def root():
-    return{
-        "message":"Assignment Tracker API"
-    }
+frontend_dist = Path(__file__).resolve().parents[2] / "frontend" / "dist"
+
+# Register this after the API routes so they keep priority over static files.
+if (frontend_dist / "index.html").is_file():
+    app.mount("/", StaticFiles(directory=frontend_dist, html=True), name="frontend")
+else:
+    @app.get("/")
+    def root():
+        return {"message": "Assignment Tracker API"}
