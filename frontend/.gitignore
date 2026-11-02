@@ -8,7 +8,7 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
-dist
+# Keep dist in Git so the Pi can run the frontend after a pull.
 dist-ssr
 *.local
 

@@ -12,7 +12,7 @@ if [[ "$EUID" -eq 0 ]]; then
     exit 1
 fi
 if [[ ! -f "$project_dir/frontend/dist/index.html" ]]; then
-    echo "Build the frontend on your Mac and copy frontend/dist to the Pi first."
+    echo "frontend/dist/index.html is missing. Pull the latest project including the built frontend."
     exit 1
 fi
 # Keep paths safe to embed in a systemd unit.
